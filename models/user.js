@@ -24,11 +24,12 @@ userSchema.methods.genToken = () => {
 }
 //PRE-LOGIN-VALIDATION
 function validateUser(user) {
-    const validity = {
+    const validity = Joi.object({
         name: Joi.string().required().min(8).max(32),
         password: Joi.string().required().min(8).max(32)
-    }
-    return Joi.validate(user,validity);
+    });
+    console.log(validity.validate(user));
+    return validity.validate(user);
 }
 
 exports.preValidation = validateUser;

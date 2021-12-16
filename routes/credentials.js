@@ -1,9 +1,55 @@
 const {user, preValidation} = require('../models/user');
-const router = express.router();
+const express = require('express');
+const router = express.Router();
 
 router.get('/', async(req,res)=> {
-    return('TEST-OK');
-})
+    res.send('TEST OK');
+});
 
-module.exports.credential_routes = router;
+router.post('/login', async(req,res)=> {
+    const existingUser = await user.findOne({name: req.body.name});
+    if(!existingUser) {
+        res.status(400).send('Incorrect username or password');
+        return;
+    }
+    else {
+        try {
+        }
+        catch (exception) {
+
+        }
+    }
+});
+
+router.post('/register', async(req,res)=> {
+    console.log("AAA",req.body);
+    const {error} = preValidation(req.body);
+    if (error) {
+        res.status(400).send('Invalid data');
+        return;
+    }
+    else {
+        try {
+            const existingUser = await user.findOne({name: req.body.name});
+            if (existingUser) {
+                res.status(200).send('User with this name exists');
+                return;
+            }
+            else {
+                addUser = new user({
+                    name: req.body.name,
+                    password: req.body.password
+                })
+                const result = await addUser.save();
+                res.status(200).send(result);
+            }
+        }
+        catch (exception) {
+            console.log(exception.message);
+            res.status(500).send('An error has occured');
+        }
+    }
+});
+
+module.exports = router;
 
