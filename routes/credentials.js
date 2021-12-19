@@ -2,25 +2,6 @@ const {user, preValidation} = require('../models/user');
 const express = require('express');
 const router = express.Router();
 
-router.get('/', async(req,res)=> {
-    res.send('TEST OK');
-});
-
-router.post('/login', async(req,res)=> {
-    const existingUser = await user.findOne({name: req.body.name});
-    if(!existingUser) {
-        res.status(400).send('Incorrect username or password');
-        return;
-    }
-    else {
-        try {
-        }
-        catch (exception) {
-
-        }
-    }
-});
-
 router.post('/register', async(req,res)=> {
     console.log("AAA",req.body);
     const {error} = preValidation(req.body);
