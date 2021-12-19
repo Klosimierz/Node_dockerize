@@ -28,7 +28,6 @@ function validateUser(user) {
         name: Joi.string().required().min(8).max(32),
         password: Joi.string().required().min(8).max(32)
     });
-    console.log(validity.validate(user));
     return validity.validate(user);
 }
 

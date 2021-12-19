@@ -7,10 +7,13 @@ const mongoose = require('mongoose');
 const credential_routes = require('./routes/credentials');
 const swapi_routes = require('./routes/swapi');
 
+//Config
 const port = config.get('port');
 const conString = config.get('db_connection_string');
 
+//Custom middleware
 const restrictRouting = require('./middleware/isAuth');
+const asyncAutoCatch = require('./middleware/asyncAutoCatch');
 
 mongoose.connect(conString)
     .then(()=>{console.log('Connection established')})
@@ -20,6 +23,7 @@ const app = express();
 
 app.use(express.json());
 app.use('/users',credential_routes);
+//FROM THIS POINT, EVERYTHING REQUIRES AUTHORIZATION
 app.use(restrictRouting);
 app.use('/swapi',swapi_routes);
 

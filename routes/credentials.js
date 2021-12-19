@@ -3,7 +3,6 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/register', async(req,res)=> {
-    console.log("AAA",req.body);
     const {error} = preValidation(req.body);
     if (error) {
         res.status(400).send('Invalid data');
@@ -13,7 +12,7 @@ router.post('/register', async(req,res)=> {
         try {
             const existingUser = await user.findOne({name: req.body.name});
             if (existingUser) {
-                res.status(200).send('User with this name exists');
+                res.status(400).send('User with this name exists');
                 return;
             }
             else {

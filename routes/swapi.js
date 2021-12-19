@@ -2,40 +2,40 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const { cache } = require('../models/caching');
-const { isAuthorized } = require('../routes/credentials');
 
 router.get('/films', async (req, res) => {
+
+    //Variables -start
     let response;
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "films" });
-    let cacheIsOutdated = false;
-    //check if cache isn't outdated
-    if(existingCache?.expiryDate < Date.now()) {
+    page ? parseInt(page) : 1;
+    size ? parseInt(size) : 1;
+    //Variables -end
+
+    if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
-        cacheIsOutdated = true;
-        await cache.findOneAndDelete({endpoint: "films"});
+        await cache.findOneAndDelete({ endpoint: "films" });
     }
-    //end
-    page = 1;
-    size = 10;
-    //FOR CACHED ASSETS
-    if (existingCache?.payload && !cacheIsOutdated) {
+
+    else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
-            response = existingCache.payload[(req.body.id)-1];
+            response = existingCache.payload[(req.body.id) - 1];
             res.send(response);
+            return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
             res.send(response);
-        }      
+            return;
+        }
     }
-    //FOR CACHED ASSETS --END
-    //FOR UNCACHED ASSETS
-    else {
+
+    {
         console.log('UNCACHED');
-        if (Number.isInteger(req.body.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/films/${req.body.id}`);
+        if (Number.isInteger(req.query.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/films/${req.query.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/films");
@@ -47,13 +47,12 @@ router.get('/films', async (req, res) => {
             let addCache = new cache({
                 endpoint: "films",
                 payload: resultsArray,
-                expiryDate: new Date(Date.now()+86400000)
+                expiryDate: new Date(Date.now() + 86400000)
             });
-            const {payload} = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));          
+            const { payload } = await addCache.save();
+            res.send(payload.slice((page - 1) * size, page * size));
         }
     }
-    //FOR UNCACHED ASSETS --END
 });
 
 router.get('/species', async (req, res) => {
@@ -63,10 +62,10 @@ router.get('/species', async (req, res) => {
     let existingCache = await cache.findOne({ endpoint: "species" });
     let cacheIsOutdated = false;
     //check if cache isn't outdated
-    if(existingCache?.expiryDate < Date.now()) {
+    if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
         cacheIsOutdated = true;
-        await cache.findOneAndDelete({endpoint: "species"});
+        await cache.findOneAndDelete({ endpoint: "species" });
     }
     //end
     page = 1;
@@ -74,13 +73,13 @@ router.get('/species', async (req, res) => {
     //FOR CACHED ASSETS
     if (existingCache?.payload && !cacheIsOutdated) {
         if (Number.isInteger(req.body.id)) {
-            response = existingCache.payload[(req.body.id)-1];
+            response = existingCache.payload[(req.body.id) - 1];
             res.send(response);
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
             res.send(response);
-        }      
+        }
     }
     //FOR CACHED ASSETS --END
     //FOR UNCACHED ASSETS
@@ -99,10 +98,10 @@ router.get('/species', async (req, res) => {
             let addCache = new cache({
                 endpoint: "species",
                 payload: resultsArray,
-                expiryDate: new Date(Date.now()+86400000)
+                expiryDate: new Date(Date.now() + 86400000)
             });
-            const {payload} = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));          
+            const { payload } = await addCache.save();
+            res.send(payload.slice((page - 1) * size, page * size));
         }
     }
     //FOR UNCACHED ASSETS --END
@@ -115,10 +114,10 @@ router.get('/vehicles', async (req, res) => {
     let existingCache = await cache.findOne({ endpoint: "vehicles" });
     let cacheIsOutdated = false;
     //check if cache isn't outdated
-    if(existingCache?.expiryDate < Date.now()) {
+    if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
         cacheIsOutdated = true;
-        await cache.findOneAndDelete({endpoint: "vehicles"});
+        await cache.findOneAndDelete({ endpoint: "vehicles" });
     }
     //end
     page = 1;
@@ -126,13 +125,13 @@ router.get('/vehicles', async (req, res) => {
     //FOR CACHED ASSETS
     if (existingCache?.payload && !cacheIsOutdated) {
         if (Number.isInteger(req.body.id)) {
-            response = existingCache.payload[(req.body.id)-1];
+            response = existingCache.payload[(req.body.id) - 1];
             res.send(response);
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
             res.send(response);
-        }      
+        }
     }
     //FOR CACHED ASSETS --END
     //FOR UNCACHED ASSETS
@@ -151,10 +150,10 @@ router.get('/vehicles', async (req, res) => {
             let addCache = new cache({
                 endpoint: "vehicles",
                 payload: resultsArray,
-                expiryDate: new Date(Date.now()+86400000)
+                expiryDate: new Date(Date.now() + 86400000)
             });
-            const {payload} = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));          
+            const { payload } = await addCache.save();
+            res.send(payload.slice((page - 1) * size, page * size));
         }
     }
     //FOR UNCACHED ASSETS --END
@@ -167,10 +166,10 @@ router.get('/people', async (req, res) => {
     let existingCache = await cache.findOne({ endpoint: "people" });
     let cacheIsOutdated = false;
     //check if cache isn't outdated
-    if(existingCache?.expiryDate < Date.now()) {
+    if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
         cacheIsOutdated = true;
-        await cache.findOneAndDelete({endpoint: "people"});
+        await cache.findOneAndDelete({ endpoint: "people" });
     }
     //end
     page = 1;
@@ -178,13 +177,13 @@ router.get('/people', async (req, res) => {
     //FOR CACHED ASSETS
     if (existingCache?.payload && !cacheIsOutdated) {
         if (Number.isInteger(req.body.id)) {
-            response = existingCache.payload[(req.body.id)-1];
+            response = existingCache.payload[(req.body.id) - 1];
             res.send(response);
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
             res.send(response);
-        }      
+        }
     }
     //FOR CACHED ASSETS --END
     //FOR UNCACHED ASSETS
@@ -203,10 +202,10 @@ router.get('/people', async (req, res) => {
             let addCache = new cache({
                 endpoint: "people",
                 payload: resultsArray,
-                expiryDate: new Date(Date.now()+86400000)
+                expiryDate: new Date(Date.now() + 86400000)
             });
-            const {payload} = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));          
+            const { payload } = await addCache.save();
+            res.send(payload.slice((page - 1) * size, page * size));
         }
     }
     //FOR UNCACHED ASSETS --END
@@ -219,10 +218,10 @@ router.get('/starships', async (req, res) => {
     let existingCache = await cache.findOne({ endpoint: "starships" });
     let cacheIsOutdated = false;
     //check if cache isn't outdated
-    if(existingCache?.expiryDate < Date.now()) {
+    if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
         cacheIsOutdated = true;
-        await cache.findOneAndDelete({endpoint: "starships"});
+        await cache.findOneAndDelete({ endpoint: "starships" });
     }
     //end
     page = 1;
@@ -230,13 +229,13 @@ router.get('/starships', async (req, res) => {
     //FOR CACHED ASSETS
     if (existingCache?.payload && !cacheIsOutdated) {
         if (Number.isInteger(req.body.id)) {
-            response = existingCache.payload[(req.body.id)-1];
+            response = existingCache.payload[(req.body.id) - 1];
             res.send(response);
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
             res.send(response);
-        }      
+        }
     }
     //FOR CACHED ASSETS --END
     //FOR UNCACHED ASSETS
@@ -255,10 +254,10 @@ router.get('/starships', async (req, res) => {
             let addCache = new cache({
                 endpoint: "starships",
                 payload: resultsArray,
-                expiryDate: new Date(Date.now()+86400000)
+                expiryDate: new Date(Date.now() + 86400000)
             });
-            const {payload} = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));          
+            const { payload } = await addCache.save();
+            res.send(payload.slice((page - 1) * size, page * size));
         }
     }
     //FOR UNCACHED ASSETS --END
@@ -270,25 +269,25 @@ router.get('/planets', async (req, res) => {
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "planets" });
     let cacheIsOutdated = false;
+    page ? parseInt(page) : 1;
+    size ? parseInt(size) : 1;
     //check if cache isn't outdated
-    if(existingCache?.expiryDate < Date.now()) {
+    if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
         cacheIsOutdated = true;
-        await cache.findOneAndDelete({endpoint: "planets"});
+        await cache.findOneAndDelete({ endpoint: "planets" });
     }
     //end
-    page = 1;
-    size = 10;
     //FOR CACHED ASSETS
     if (existingCache?.payload && !cacheIsOutdated) {
         if (Number.isInteger(req.body.id)) {
-            response = existingCache.payload[(req.body.id)-1];
+            response = existingCache.payload[(req.body.id) - 1];
             res.send(response);
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
             res.send(response);
-        }      
+        }
     }
     //FOR CACHED ASSETS --END
     //FOR UNCACHED ASSETS
@@ -307,21 +306,37 @@ router.get('/planets', async (req, res) => {
             let addCache = new cache({
                 endpoint: "planets",
                 payload: resultsArray,
-                expiryDate: new Date(Date.now()+86400000)
+                expiryDate: new Date(Date.now() + 86400000)
             });
-            const {payload} = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));          
+            const { payload } = await addCache.save();
+            res.send(payload.slice((page - 1) * size, page * size));
         }
     }
     //FOR UNCACHED ASSETS --END
 });
 
-router.get('/wordpairs', async (req, res) => {
-    const { data } = await axios.get('https://swapi.py4e.com/api/films/1');
+router.get('/wordpairs/:id', async (req, res) => {
+    const { data } = await axios.get(`https://swapi.py4e.com/api/films/${req.params.id}`);
     let text = ((data.opening_crawl).replace(/[\r\n.,]/g, ' ')).replace(/\s{2,}/g, " ");
-
     let wordArray = text.split(" ").filter((e) => { return e != '' });
+
     let dictionary = new Object();
+
+    wordArray.forEach(word => {
+        if (Object.keys(dictionary).length === 0) {
+            Object.assign(dictionary,{[word.toLowerCase()] : 0});
+        }
+        for(let key of Object.keys(dictionary)) {
+            if(key === word) {
+                dictionary[key] ++;
+                break;
+            }
+            else {
+                Object.assign(dictionary,{[word.toLowerCase()] : 1});
+            }
+        }
+        res.status(200).send(dictionary);
+    });
 
 });
 
