@@ -322,22 +322,17 @@ router.get('/wordpairs/:id', async (req, res) => {
 
     let dictionary = new Object();
 
-    wordArray.forEach(word => {
-        if (Object.keys(dictionary).length === 0) {
-            Object.assign(dictionary,{[word.toLowerCase()] : 0});
+    for(let x = 0; x < wordArray.length; x++) {
+        if (dictionary[wordArray[x]] === undefined) {
+            dictionary[wordArray[x]] = 1;
         }
-        for(let key of Object.keys(dictionary)) {
-            if(key === word) {
-                dictionary[key] ++;
-                break;
-            }
-            else {
-                Object.assign(dictionary,{[word.toLowerCase()] : 1});
-            }
+        else {
+            dictionary[wordArray[x]] ++;
         }
-        res.status(200).send(dictionary);
-    });
+    }
 
+
+    res.status(200).send(dictionary);
 });
 
 router.get('/common_name', async (req, res) => {
