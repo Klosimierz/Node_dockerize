@@ -1,5 +1,5 @@
 {
     "name": "def",
     "port": 3000,
-    "db_connection_string": "mongodb://localhost:27017/newDb"
+    "db_connection_string": "mongodb://mongo:27017/dockerized-mongo"
 }

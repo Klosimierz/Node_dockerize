@@ -10,8 +10,8 @@ router.get('/films', async (req, res) => {
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "films" });
-    page ? parseInt(page) : 1;
-    size ? parseInt(size) : 1;
+    page ? parseInt(page) : page = 1;
+    size ? parseInt(size) : size = 10;
     //Variables -end
 
     if (existingCache?.expiryDate < Date.now()) {
@@ -22,12 +22,12 @@ router.get('/films', async (req, res) => {
     else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
             response = existingCache.payload[(req.body.id) - 1];
-            res.send(response);
+            res.status(200).send(response);
             return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
-            res.send(response);
+            res.status(200).send(response);
             return;
         }
     }
@@ -50,43 +50,43 @@ router.get('/films', async (req, res) => {
                 expiryDate: new Date(Date.now() + 86400000)
             });
             const { payload } = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));
+            res.status(200).send(payload.slice((page - 1) * size, page * size));
         }
     }
 });
 
 router.get('/species', async (req, res) => {
+    //Variables -start
     let response;
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "species" });
-    let cacheIsOutdated = false;
-    //check if cache isn't outdated
+    page ? parseInt(page) : page = 1;
+    size ? parseInt(size) : size = 10;
+    //Variables -end
+
     if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
-        cacheIsOutdated = true;
         await cache.findOneAndDelete({ endpoint: "species" });
     }
-    //end
-    page = 1;
-    size = 10;
-    //FOR CACHED ASSETS
-    if (existingCache?.payload && !cacheIsOutdated) {
+
+    else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
             response = existingCache.payload[(req.body.id) - 1];
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
     }
-    //FOR CACHED ASSETS --END
-    //FOR UNCACHED ASSETS
-    else {
+
+    {
         console.log('UNCACHED');
-        if (Number.isInteger(req.body.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/species/${req.body.id}`);
+        if (Number.isInteger(req.query.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/species/${req.query.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/species");
@@ -101,44 +101,43 @@ router.get('/species', async (req, res) => {
                 expiryDate: new Date(Date.now() + 86400000)
             });
             const { payload } = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));
+            res.status(200).send(payload.slice((page - 1) * size, page * size));
         }
     }
-    //FOR UNCACHED ASSETS --END
 });
 
 router.get('/vehicles', async (req, res) => {
+    //Variables -start
     let response;
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "vehicles" });
-    let cacheIsOutdated = false;
-    //check if cache isn't outdated
+    page ? parseInt(page) : page = 1;
+    size ? parseInt(size) : size = 10;
+    //Variables -end
+
     if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
-        cacheIsOutdated = true;
         await cache.findOneAndDelete({ endpoint: "vehicles" });
     }
-    //end
-    page = 1;
-    size = 10;
-    //FOR CACHED ASSETS
-    if (existingCache?.payload && !cacheIsOutdated) {
+
+    else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
             response = existingCache.payload[(req.body.id) - 1];
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
     }
-    //FOR CACHED ASSETS --END
-    //FOR UNCACHED ASSETS
-    else {
+
+    {
         console.log('UNCACHED');
-        if (Number.isInteger(req.body.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/vehicles/${req.body.id}`);
+        if (Number.isInteger(req.query.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/vehicles/${req.query.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/vehicles");
@@ -153,44 +152,43 @@ router.get('/vehicles', async (req, res) => {
                 expiryDate: new Date(Date.now() + 86400000)
             });
             const { payload } = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));
+            res.status(200).send(payload.slice((page - 1) * size, page * size));
         }
     }
-    //FOR UNCACHED ASSETS --END
 });
 
 router.get('/people', async (req, res) => {
+    //Variables -start
     let response;
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "people" });
-    let cacheIsOutdated = false;
-    //check if cache isn't outdated
+    page ? parseInt(page) : page = 1;
+    size ? parseInt(size) : size = 10;
+    //Variables -end
+
     if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
-        cacheIsOutdated = true;
         await cache.findOneAndDelete({ endpoint: "people" });
     }
-    //end
-    page = 1;
-    size = 10;
-    //FOR CACHED ASSETS
-    if (existingCache?.payload && !cacheIsOutdated) {
+
+    else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
             response = existingCache.payload[(req.body.id) - 1];
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
     }
-    //FOR CACHED ASSETS --END
-    //FOR UNCACHED ASSETS
-    else {
+
+    {
         console.log('UNCACHED');
-        if (Number.isInteger(req.body.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/people/${req.body.id}`);
+        if (Number.isInteger(req.query.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/people/${req.query.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/people");
@@ -205,44 +203,43 @@ router.get('/people', async (req, res) => {
                 expiryDate: new Date(Date.now() + 86400000)
             });
             const { payload } = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));
+            res.status(200).send(payload.slice((page - 1) * size, page * size));
         }
     }
-    //FOR UNCACHED ASSETS --END
 });
 
 router.get('/starships', async (req, res) => {
+    //Variables -start
     let response;
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "starships" });
-    let cacheIsOutdated = false;
-    //check if cache isn't outdated
+    page ? parseInt(page) : page = 1;
+    size ? parseInt(size) : size = 10;
+    //Variables -end
+
     if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
-        cacheIsOutdated = true;
         await cache.findOneAndDelete({ endpoint: "starships" });
     }
-    //end
-    page = 1;
-    size = 10;
-    //FOR CACHED ASSETS
-    if (existingCache?.payload && !cacheIsOutdated) {
+
+    else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
             response = existingCache.payload[(req.body.id) - 1];
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
     }
-    //FOR CACHED ASSETS --END
-    //FOR UNCACHED ASSETS
-    else {
+
+    {
         console.log('UNCACHED');
-        if (Number.isInteger(req.body.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/starships/${req.body.id}`);
+        if (Number.isInteger(req.query.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/starships/${req.query.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/starships");
@@ -257,44 +254,43 @@ router.get('/starships', async (req, res) => {
                 expiryDate: new Date(Date.now() + 86400000)
             });
             const { payload } = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));
+            res.status(200).send(payload.slice((page - 1) * size, page * size));
         }
     }
-    //FOR UNCACHED ASSETS --END
 });
 
 router.get('/planets', async (req, res) => {
+    //Variables -start
     let response;
     let resultsArray;
     let { page, size } = req.query;
     let existingCache = await cache.findOne({ endpoint: "planets" });
-    let cacheIsOutdated = false;
-    page ? parseInt(page) : 1;
-    size ? parseInt(size) : 1;
-    //check if cache isn't outdated
+    page ? parseInt(page) : page = 1;
+    size ? parseInt(size) : size = 10;
+    //Variables -end
+
     if (existingCache?.expiryDate < Date.now()) {
         console.log('Old data, deleting');
-        cacheIsOutdated = true;
         await cache.findOneAndDelete({ endpoint: "planets" });
     }
-    //end
-    //FOR CACHED ASSETS
-    if (existingCache?.payload && !cacheIsOutdated) {
+
+    else if (existingCache?.payload) {
         if (Number.isInteger(req.body.id)) {
             response = existingCache.payload[(req.body.id) - 1];
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
         else {
             response = existingCache.payload.slice((page - 1) * size, page * size);
-            res.send(response);
+            res.status(200).send(response);
+            return;
         }
     }
-    //FOR CACHED ASSETS --END
-    //FOR UNCACHED ASSETS
-    else {
+
+    {
         console.log('UNCACHED');
-        if (Number.isInteger(req.body.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/planets/${req.body.id}`);
+        if (Number.isInteger(req.query.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/planets/${req.query.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/planets");
@@ -309,15 +305,18 @@ router.get('/planets', async (req, res) => {
                 expiryDate: new Date(Date.now() + 86400000)
             });
             const { payload } = await addCache.save();
-            res.send(payload.slice((page - 1) * size, page * size));
+            res.status(200).send(payload.slice((page - 1) * size, page * size));
         }
     }
-    //FOR UNCACHED ASSETS --END
 });
 
-router.get('/wordpairs/:id', async (req, res) => {
-    const { data } = await axios.get(`https://swapi.py4e.com/api/films/${req.params.id}`);
-    let text = ((data.opening_crawl).replace(/[\r\n.,]/g, ' ')).replace(/\s{2,}/g, " ");
+router.get('/wordpairs', async (req, res) => {
+    const { data } = await axios.get(`https://swapi.py4e.com/api/films`);
+    let coalesced_crawl = '';
+    (data.results).forEach(result => {
+        coalesced_crawl+=(' ',result.opening_crawl);
+    })
+    let text = ((coalesced_crawl).replace(/[\r\n.,]/g, ' ')).replace(/\s{2,}/g, " ");
     let wordArray = text.split(" ").filter((e) => { return e != '' });
 
     let dictionary = new Object();
@@ -330,13 +329,33 @@ router.get('/wordpairs/:id', async (req, res) => {
             dictionary[wordArray[x]] ++;
         }
     }
-
-
     res.status(200).send(dictionary);
 });
 
 router.get('/common_name', async (req, res) => {
+    const existingCachePpl = await cache.findOne({ endpoint: "people" });
+    const existingCacheMvs = await cache.findOne({ endpoint: "films"});
+    const names = (existingCachePpl.payload).map(obj => obj.name);
+    const crawls = (existingCacheMvs.payload).map(obj => obj.opening_crawl);
+    const fullCrawls = ((crawls.join(' ')).replace(/[\r\n.,]/g, ' ')).replace(/\s{2,}/g, " ");
+    const count_substr = (str, searchValue) => {
+        let count = 0,
+          i = 0;
+        while (true) {
+          const r = str.indexOf(searchValue, i);
+          if (r !== -1) [count, i] = [count + 1, r + 1];
+          else return count;
+        }
+      }; 
 
+    let output = {};
+
+    names.forEach(name => {
+        Object.assign(output,{[name] : count_substr(fullCrawls,name)});
+    })
+
+    let sorted = (Object.entries(output)).sort((name,occurences)=>occurences[1]-name[1]);
+    res.status(200).send(sorted[0]);
 });
 
 module.exports = router;
