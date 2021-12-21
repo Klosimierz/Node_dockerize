@@ -34,8 +34,8 @@ router.get('/films', async (req, res) => {
 
     {
         console.log('UNCACHED');
-        if (Number.isInteger(req.query.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/films/${req.query.id}`);
+        if (Number.isInteger(req.body.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/films/${req.body.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/films");
@@ -85,8 +85,8 @@ router.get('/species', async (req, res) => {
 
     {
         console.log('UNCACHED');
-        if (Number.isInteger(req.query.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/species/${req.query.id}`);
+        if (Number.isInteger(req.body.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/species/${req.body.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/species");
@@ -136,8 +136,8 @@ router.get('/vehicles', async (req, res) => {
 
     {
         console.log('UNCACHED');
-        if (Number.isInteger(req.query.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/vehicles/${req.query.id}`);
+        if (Number.isInteger(req.body.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/vehicles/${req.body.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/vehicles");
@@ -187,8 +187,8 @@ router.get('/people', async (req, res) => {
 
     {
         console.log('UNCACHED');
-        if (Number.isInteger(req.query.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/people/${req.query.id}`);
+        if (Number.isInteger(req.body.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/people/${req.body.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/people");
@@ -238,8 +238,8 @@ router.get('/starships', async (req, res) => {
 
     {
         console.log('UNCACHED');
-        if (Number.isInteger(req.query.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/starships/${req.query.id}`);
+        if (Number.isInteger(req.body.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/starships/${req.body.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/starships");
@@ -289,8 +289,8 @@ router.get('/planets', async (req, res) => {
 
     {
         console.log('UNCACHED');
-        if (Number.isInteger(req.query.id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/planets/${req.query.id}`);
+        if (Number.isInteger(req.body.id)) {
+            response = await axios.get(`https://swapi.py4e.com/api/planets/${req.body.id}`);
         }
         else {
             response = await axios.get("https://swapi.py4e.com/api/planets");
@@ -333,8 +333,8 @@ router.get('/wordpairs', async (req, res) => {
 });
 
 router.get('/common_name', async (req, res) => {
-    const existingCachePpl = await cache.findOne({ endpoint: "people" });
-    const existingCacheMvs = await cache.findOne({ endpoint: "films"});
+    let existingCachePpl = await cache.findOne({ endpoint: "people" });
+    let existingCacheMvs = await cache.findOne({ endpoint: "films"});
     const names = (existingCachePpl.payload).map(obj => obj.name);
     const crawls = (existingCacheMvs.payload).map(obj => obj.opening_crawl);
     const fullCrawls = ((crawls.join(' ')).replace(/[\r\n.,]/g, ' ')).replace(/\s{2,}/g, " ");

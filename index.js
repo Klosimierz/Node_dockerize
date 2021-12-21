@@ -14,15 +14,15 @@ const conString = config.get('db_connection_string');
 //Custom middleware
 const restrictRouting = require('./middleware/isAuth');
 const asyncAutoCatch = require('./middleware/asyncAutoCatch');
-/*
+
 mongoose.connect('mongodb://mongo:27017/nodebase')
     .then(()=>{console.log('Connection established')})
     .catch((err)=>{console.log(`Connection failed: ${err}`)});
-*/
+/*
 mongoose.connect('mongodb://localhost:27017/newDb')
     .then(()=>{console.log('Connection established')})
     .catch((err)=>{console.log(`Connection failed: ${err}`)});
-
+*/
 const app = express();
 
 app.use(express.json());
