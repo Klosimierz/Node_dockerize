@@ -7,5 +7,6 @@ module.exports = async function isAuthorized(req, res, next) {
     }
     else {
         res.status(401).send('Unauthorized');
+        return 1;
     }
 }
