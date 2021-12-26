@@ -36,7 +36,8 @@ router.get(['/:endpoint','/:endpoint/:id'], async (req, res) => {
     {
         console.log('Uncached data');
         if (Number.isInteger(id)) {
-            response = await axios.get(`https://swapi.py4e.com/api/${endpoint}/${id}`);
+            const {payload} = await get_all_results(endpoint);
+            res.status(200).send(payload[id-1]);
         }
         else {
             const {payload} = await get_all_results(endpoint);
