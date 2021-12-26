@@ -1,3 +1,5 @@
+require('express-async-errors');
+
 const express = require('express');
 const config = require('config');
 const mongoose = require('mongoose');
@@ -10,9 +12,12 @@ const port = config.get('port');
 const conString = config.get('db_connection_string');
 
 const restrictRouting = require('./middleware/isAuth');
-const asyncAutoCatch = require('./middleware/asyncAutoCatch');
-
+/*
 mongoose.connect('mongodb://mongo:27017/nodebase')
+    .then(()=>{console.log('Connection established')})
+    .catch((err)=>{console.log(`Connection failed: ${err}`)});
+*/
+mongoose.connect('mongodb://localhost/testingDbFinal')
     .then(()=>{console.log('Connection established')})
     .catch((err)=>{console.log(`Connection failed: ${err}`)});
 

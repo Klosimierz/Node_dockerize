@@ -11,25 +11,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
-        minlength: 8,
-        maxlength: 32
+        required: true
     }
 });
 
 const user = mongoose.model('User',userSchema);
 
-userSchema.methods.genToken = () => {
-    return jwt.sign({_id:this._id},"temporary_secret");
-}
-//PRE-LOGIN-VALIDATION
-function validateUser(user) {
-    const validity = Joi.object({
-        name: Joi.string().required().min(8).max(32),
-        password: Joi.string().required().min(8).max(32)
-    });
-    return validity.validate(user);
-}
-
-exports.preValidation = validateUser;
 exports.user = user;
